@@ -895,7 +895,7 @@ try
                  "variableintervalflag"; "licklight"; "CS1lasercheck";...
                  "CS2lasercheck"; "CS3lasercheck"; "CS4lasercheck";"fixedsidecheck"; "Rewardlasercheck";...
                  "CSrampmaxdelay"; "CSrampexp"; "CSincrease"; "delaybetweensoundandlight";...
-                 "CSsecondcue";"CSsecondcuefreq";"CSsecondcuespeaker";"CSsecondcuelight"]);
+                 "CSsecondcue";"CSsecondcuefreq";"CSsecondcuespeaker";"CSsecondcuelight"; "PR multiplier"]);
 
         params.(paramnames(1)) = param(1:4);                        % numtrials (3)
         params.(paramnames(2)) = param(5:8);                        % CS frequency (3)
@@ -958,6 +958,7 @@ try
         params.(paramnames(59)) = param(145:148);                   % CS second cue frequency 
         params.(paramnames(60)) = param(149:152);                   % CS second cue speaker number
         params.(paramnames(61)) = param(153:156);                   % CS second cue light number
+        params.(paramnames(62)) = param(156:158);                   % progressive ratio multiplier for operant task
   
     assignin('base','eventlog',eventlog);
 %     file = [saveDir fname '_' num2str(r_bgd) '_' num2str(T_bgd) '_'  str probstr laserstr bgdsolenoidstr extinctionstr date '.mat'];
@@ -1043,7 +1044,7 @@ catch exception
                  "variableintervalflag"; "licklight"; "CS1lasercheck";...
                  "CS2lasercheck"; "CS3lasercheck"; "CS4lasercheck";"fixedsidecheck"; "Rewardlasercheck";...
                  "CSrampmaxdelay"; "CSrampexp"; "CSincrease"; "delaybetweensoundandlight";...
-                 "CSsecondcue";"CSsecondcuefreq";"CSsecondcuespeaker";"CSsecondcuelight"]);
+                 "CSsecondcue";"CSsecondcuefreq";"CSsecondcuespeaker";"CSsecondcuelight"; "PR multiplier"]);
 
         params.(paramnames(1)) = param(1:4);                        % numtrials (3)
         params.(paramnames(2)) = param(5:8);                        % CS frequency (3)
@@ -1106,5 +1107,7 @@ catch exception
         params.(paramnames(59)) = param(145:148);                   % CS second cue frequency 
         params.(paramnames(60)) = param(149:152);                   % CS second cue speaker number
         params.(paramnames(61)) = param(153:156);                   % CS second cue light number
+        params.(paramnames(62)) = param(156:158);                   % progressive ratio multiplier for operant task
+        
     save(file, 'eventlog', 'params','exception')
 end
