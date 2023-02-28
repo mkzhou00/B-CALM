@@ -129,8 +129,28 @@ solenoid4s = textfield.solenoid4s;
 lickretractsolenoid1s = textfield.lickretractsolenoid1s;
 lickretractsolenoid2s = textfield.lickretractsolenoid2s;
 
+set(lick1s,'Value',0)
+set(lick2s,'Value',0)
+set(lick3s,'Value',0)
+set(bgdsolenoids,'Value',0)
+set(CS1sounds,'Value',0)
+set(CS2sounds,'Value',0)
+set(CS3sounds,'Value',0)
+set(CS4sounds,'Value',0)
+set(CS1lights,'Value',0)
+set(CS2lights,'Value',0)
+set(CS3lights,'Value',0)
+set(CS4lights,'Value',0)
+set(solenoid1s,'Value',0)
+set(solenoid2s,'Value',0)
+set(solenoid3s,'Value',0)
+set(solenoid4s,'Value',0)
+set(lickretractsolenoid1s,'Value',0)
+set(lickretractsolenoid2s,'Value',0)
+
+
 % setup plot
-axes(actvAx)                            % make the activity axes the current one
+axes(actvAx) % set as global so conditiong_prog can plot
 if (experimentmode == 1 && intervaldistribution<3) || experimentmode == 4 || experimentmode == 6 || experimentmode == 7
     plot(xWindow,[0 0],'k','LineWidth',2);hold on                   % start figure for plots
     set(actvAx,'ytick',[], ...

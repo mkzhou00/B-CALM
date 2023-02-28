@@ -1,6 +1,6 @@
 function behavior_GUI
 
-global s running actvAx saveDir textfield
+global s running actvAx saveDir textfield fig
 
 mainPath = 'C:\Users\Elizabeth Hamada\Desktop\testing arduino';
 addpath(mainPath)
@@ -58,19 +58,19 @@ uploadbutton = uibutton('Parent', experiments,'Text', 'Upload','FontSize', 11,..
 disconnectbutton = uibutton(fig, 'Position',[115 790 100 40], 'Text','Disconnect','FontSize',11, 'Enable','off','ButtonPushedFcn', {@pushDisconnect,connectbutton,connectfield,uploadbutton,refreshbutton,availablePorts,experimentmode});
 
 % Data for csproperties and lick properties
-tempCS ={'Number of trials', 10, 10, 0, 0;
+tempCS ={'Number of trials', 50, 0, 0, 0;
         'Frequency(kHz)', 12, 3, 5, 0;
         'Predicted solenoid', '1+3', '1+3', '1+3', '1+3';
         'Probability of solenoid', '0+100', '0+100', '0+0', '0+0';
-        'Solenoid open time (ms)', '3000+40', '3000+40', '0+30', '0+40';
-        'Cue duration (ms)', 1000, 1000, 1000, 1000;
+        'Solenoid open time (ms)', '0+40', '3000+40', '0+30', '0+40';
+        'Cue duration (ms)', 500, 1000, 1000, 1000;
         'Delay to solenoid (ms)', '0+3000', '0+3000', '0+3000', '0+3000';
         'Pulse tone (1) or not (0)', 0, 0, 1, 0;
         'Speaker number', 1, 2, 2, 2;
         'Light number', 1, 2, 1, 2;
         'Go lick requirement', 0, 0, 0, 0;
         'Go lick tube (or solenoid)', 1, 1, 1, 1;
-        'Cue type: sound(1), light(2)', 1, 2, 1, 1;
+        'Cue type: sound(1), light(2)', 2, 2, 1, 1;
         'Ramp max delay', 5000, 5000,1200, 5000;
         'Ramp exponent', 1, 1, 1, 1;
         'Increasing cue (1) or not(0)', 0, 0, 0, 0;
@@ -289,7 +289,7 @@ sendbutton = uibutton(fig,'Text','Send','FontSize', 12,'Position',[900 350 120 5
     laserfunctions,ITIfunctions,bgdsolfunctions, Optopanel, ITIpanel, bgdrpanel});
 
 set(uploadbutton,'ButtonPushedFcn', {@pushUpload,availablePorts,uploadbutton,experimentmode,connectbutton});
-set(connectbutton,'ButtonPushedFcn', {@pushConnect,connectbutton,availablePorts,connectfield,disconnectbutton,refreshbutton,sendbutton});
+set(connectbutton,'ButtonPushedFcn', {@pushConnect,connectbutton,availablePorts,connectfield,disconnectbutton,refreshbutton,sendbutton,cstable,licktable,Optopanel,ITIpanel,bgdrpanel});
 set(disconnectbutton,'ButtonPushedFcn', {@pushDisconnect,connectbutton,connectfield,uploadbutton,refreshbutton,availablePorts,experimentmode,sendbutton,startbutton});
 set(sendbutton, 'ButtonPushedFcn', {@pushSend,disconnectbutton,refreshbutton,startbutton, testbuttons, cstable, licktable, experimentmode,...
   laserfunctions, ITIfunctions, bgdsolfunctions, Optopanel, ITIpanel, bgdrpanel});
@@ -335,7 +335,8 @@ function pushUpload(source, eventdata, availablePorts,uploadbutton,experimentmod
     end
 end
 
-function pushConnect(source,eventdata,connectbutton,availablePorts,connectfield,disconnectbutton,refreshbutton,sendbutton) 
+function pushConnect(source,eventdata,connectbutton,availablePorts,connectfield,disconnectbutton,refreshbutton,sendbutton, ...
+    cstable,licktable,Optopanel,ITIpanel,bgdrpanel) 
     global s
 
     portList = get(availablePorts,'Items');    % get list from popup menu
@@ -351,11 +352,17 @@ function pushConnect(source,eventdata,connectbutton,availablePorts,connectfield,
     set(disconnectbutton,'Enable','on');
     set(refreshbutton,'Enable','off');
     set(sendbutton, 'Enable', 'on');
+
+    set(cstable,'Enable','on','ColumnEditable',true); %Make table uneditable
+    set(licktable,'Enable','on','ColumnEditable',true); %Make table uneditable
+    set(Optopanel, 'Enable', 'on');
+    set(ITIpanel, 'Enable', 'on');
+    set(bgdrpanel, 'Enable','on');
 end
 
 function pushDisconnect(source, eventdata, connectbutton,connectfield,uploadbutton,refreshbutton,availablePorts,experimentmode,sendbutton,startbutton)
     global s
-    fclose(s);
+%     fclose(s);
     delete(s);
 
     set(source,'Enable','off');
@@ -557,7 +564,7 @@ end
 function pushStart(source,eventdata,testbuttons,stopbutton,filenamefield,experimentmode,...
     laserfunctions,ITIfunctions,bgdsolfunctions,starttimefield,cstable, licktable)
     
-    global s running actvAx saveDir textfield
+    global s running actvAx saveDir textfield fig
     numtrials    = cell2mat(cstable.Data(1,2:end));
     CSfreq       = cell2mat(cstable.Data(2,2:end));
     CSsolenoid   = [str2double(split(cstable.Data(3,2),'+'))',...
@@ -682,7 +689,7 @@ function pushStop(source,eventdata,filenamefield,disconnectbutton)
     set(filenamefield,'Enable','on','Editable','on');
     set(disconnectbutton,'Enable','on');
     %Close Serial Port
-    fclose(s)
+%     fclose(s)
     clear("serialport");                                          % "closes serial"
 %     delete(s);
 end
