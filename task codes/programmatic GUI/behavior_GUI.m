@@ -18,7 +18,6 @@ fig = uifigure('Position', [x - width/2, y - height/2, width, height]);
 fig.Units = 'normalized';
 fig.Name = 'Behavior_GUI';
 
-
 % Find available serial ports
 availablePortslbl = uilabel(fig);
 availablePortslbl.Text='Select Serial Port:';
@@ -30,7 +29,6 @@ port = serialportlist("available");
 if ~isempty(port)
     set(availablePorts,'Items',port)
 end
-
 
 %Connected to Field
 connectlbl = uilabel(fig, 'Text', 'Connected to:', 'Position', [580 850 80 22]);
@@ -58,19 +56,19 @@ uploadbutton = uibutton('Parent', experiments,'Text', 'Upload','FontSize', 11,..
 disconnectbutton = uibutton(fig, 'Position',[115 790 100 40], 'Text','Disconnect','FontSize',11, 'Enable','off','ButtonPushedFcn', {@pushDisconnect,connectbutton,connectfield,uploadbutton,refreshbutton,availablePorts,experimentmode});
 
 % Data for csproperties and lick properties
-tempCS ={'Number of trials', 50, 0, 0, 0;
+tempCS ={'Number of trials', 25, 25, 50, 0;
         'Frequency(kHz)', 12, 3, 5, 0;
         'Predicted solenoid', '1+3', '1+3', '1+3', '1+3';
         'Probability of solenoid', '0+100', '0+100', '0+0', '0+0';
         'Solenoid open time (ms)', '0+40', '3000+40', '0+30', '0+40';
-        'Cue duration (ms)', 500, 1000, 1000, 1000;
+        'Cue duration (ms)', 1000, 1000, 1000, 1000;
         'Delay to solenoid (ms)', '0+3000', '0+3000', '0+3000', '0+3000';
         'Pulse tone (1) or not (0)', 0, 0, 1, 0;
         'Speaker number', 1, 2, 2, 2;
         'Light number', 1, 2, 1, 2;
         'Go lick requirement', 0, 0, 0, 0;
         'Go lick tube (or solenoid)', 1, 1, 1, 1;
-        'Cue type: sound(1), light(2)', 2, 2, 1, 1;
+        'Cue type: sound(1), light(2)', 1, 1, 1, 1;
         'Ramp max delay', 5000, 5000,1200, 5000;
         'Ramp exponent', 1, 1, 1, 1;
         'Increasing cue (1) or not(0)', 0, 0, 0, 0;
@@ -182,6 +180,13 @@ trialbytrialbgdsolenoidflag = uicheckbox('Parent',bgdrpanel, 'Text', 'Run trial-
 
 bgdsolfunctions = [bgdsolenoid, r_bgd, T_bgd, mindelaybgdtocue, mindelayfxdtobgd, totPoisssolenoid, trialbytrialbgdsolenoidflag];
 
+% Set the panels off initially
+set(cstable,'Enable','off','ColumnEditable',false); %Make table uneditable
+set(licktable,'Enable','off','ColumnEditable',false); %Make table uneditable
+set(Optopanel, 'Enable', 'off');
+set(ITIpanel, 'Enable', 'off');
+set(bgdrpanel, 'Enable','off');
+    
 % Test buttons 
 testCS1 = uibutton(fig, 'Text', 'Test CS1', 'FontSize',11, 'Position',[840 610 100 40], 'Enable','off','ButtonPushedFcn', {@testCS1_fcn});
 testCS2 = uibutton(fig, 'Text', 'Test CS2', 'FontSize',11, 'Position',[950 610 100 40], 'Enable','off','ButtonPushedFcn', {@testCS2_fcn});
@@ -219,7 +224,8 @@ testbuttons = [testCS1,testCS2,testCS3,testCS4,testlaser,testvacuum,manualsoleno
     primelickretractsolenoid1, primelickretractsolenoid2, manualvacuum];
 
 % Make plot
-actvAx = axes(fig, 'Units','normalized','Position', [0.018 0.022 0.53 0.44]);   % set as global so conditiong_prog can plot
+ax = uiaxes(fig, 'Units','normalized','Position', [0.018 0.022 0.53 0.44]);   % set as global so conditiong_prog can plot
+actvAx = ax;
 
 lick1text = uilabel(fig, 'Text', 'Lick1s', 'FontColor', [0.2 0.6 1],'FontWeight','bold', 'FontSize', 12, 'Position', [870 280 40 20]);
 lick1s = uieditfield(fig, 'numeric','Position', [920 280 60 30], 'Value',0);
@@ -283,18 +289,18 @@ textfield = struct( ...
 % Send, Start and Stop buttons
 stopbutton = uibutton(fig,'Text','Stop','FontSize', 12,'Position',[1180 350 120 50],'Enable','off','ButtonPushedFcn', {@pushStop});
 startbutton = uibutton(fig,'Text','Start','FontSize', 12,'Position',[1040 350 120 50],'Enable','off','ButtonPushedFcn', {@pushStart,testbuttons, ...
-    stopbutton,filenamefield,experimentmode,laserfunctions,ITIfunctions,bgdsolfunctions,starttimefield, cstable, licktable});
+    stopbutton,filenamefield,disconnectbutton,experimentmode,laserfunctions,ITIfunctions,bgdsolfunctions,starttimefield, cstable, licktable});
 sendbutton = uibutton(fig,'Text','Send','FontSize', 12,'Position',[900 350 120 50],'Enable','off','ButtonPushedFcn', {@pushSend,...
     disconnectbutton,refreshbutton,startbutton,testbuttons, cstable, licktable, experimentmode,...
     laserfunctions,ITIfunctions,bgdsolfunctions, Optopanel, ITIpanel, bgdrpanel});
 
 set(uploadbutton,'ButtonPushedFcn', {@pushUpload,availablePorts,uploadbutton,experimentmode,connectbutton});
-set(connectbutton,'ButtonPushedFcn', {@pushConnect,connectbutton,availablePorts,connectfield,disconnectbutton,refreshbutton,sendbutton,cstable,licktable,Optopanel,ITIpanel,bgdrpanel});
+set(connectbutton,'ButtonPushedFcn', {@pushConnect,connectbutton,availablePorts,connectfield,disconnectbutton,refreshbutton,sendbutton,cstable,licktable,Optopanel,ITIpanel,bgdrpanel,experimentmode});
 set(disconnectbutton,'ButtonPushedFcn', {@pushDisconnect,connectbutton,connectfield,uploadbutton,refreshbutton,availablePorts,experimentmode,sendbutton,startbutton});
 set(sendbutton, 'ButtonPushedFcn', {@pushSend,disconnectbutton,refreshbutton,startbutton, testbuttons, cstable, licktable, experimentmode,...
   laserfunctions, ITIfunctions, bgdsolfunctions, Optopanel, ITIpanel, bgdrpanel});
 set(stopbutton, 'ButtonPushedFcn', {@pushStop, filenamefield, disconnectbutton});
-set(startbutton, 'ButtonPushedFcn', {@pushStart,testbuttons,stopbutton,filenamefield,experimentmode,...
+set(startbutton, 'ButtonPushedFcn', {@pushStart,testbuttons,stopbutton,filenamefield,disconnectbutton,experimentmode,...
     laserfunctions,ITIfunctions,bgdsolfunctions,starttimefield,cstable, licktable});
 end
 
@@ -306,7 +312,7 @@ function pushUpload(source, eventdata, availablePorts,uploadbutton,experimentmod
     
     selectedmode = get(experimentmode, 'Value');
     assignin('base', "selectedmode", selectedmode);
-    
+
     if selectedmode == 1
         [status,cmdout] = dos(strcat(basecmd,'C:\Users\mzhou9\Desktop\Behavioral_acquisition_and_analysis_old\uploads\Namlab_behavior_cues.ino.hex',':i'));
     elseif selectedmode == 2
@@ -336,15 +342,18 @@ function pushUpload(source, eventdata, availablePorts,uploadbutton,experimentmod
 end
 
 function pushConnect(source,eventdata,connectbutton,availablePorts,connectfield,disconnectbutton,refreshbutton,sendbutton, ...
-    cstable,licktable,Optopanel,ITIpanel,bgdrpanel) 
+    cstable,licktable,Optopanel,ITIpanel,bgdrpanel,experimentmode) 
     global s
 
-    portList = get(availablePorts,'Items');    % get list from popup menu
+%     portList = get(availablePorts,'Items');    % get list from popup menu
     port = get(availablePorts,'Value');         % find which is selected
-
-    s = serialport(port,57600,'Timeout',1);      % setup serial port with arduino, specify the terminator as a LF ('\n' in Arduino)
-    fopen(s)                                            % open serial port with arduino
+    s = serial(port,'BaudRate',57600,'Timeout',1);      % setup serial port with arduino, specify the terminator as a LF ('\n' in Arduino)
+    fopen(s);                                           % open serial port with arduino
+    set(connectbutton,'Text','Wait 5s');
+    pause(5);
+    set(connectbutton,'Text','Connected');
     
+%     set(connectfield,'String','Link');
     set(connectfield,'Value',port);                     % write out port selected in menu
     set(availablePorts,'Enable','off');                 % Disable drop down menu of ports
     set(source,'Enable','off');
@@ -352,12 +361,23 @@ function pushConnect(source,eventdata,connectbutton,availablePorts,connectfield,
     set(disconnectbutton,'Enable','on');
     set(refreshbutton,'Enable','off');
     set(sendbutton, 'Enable', 'on');
-
-    set(cstable,'Enable','on','ColumnEditable',true); %Make table uneditable
-    set(licktable,'Enable','on','ColumnEditable',true); %Make table uneditable
-    set(Optopanel, 'Enable', 'on');
-    set(ITIpanel, 'Enable', 'on');
-    set(bgdrpanel, 'Enable','on');
+    
+    selectedmode = get(experimentmode, 'Value');
+    if selectedmode == 1
+        set(cstable,'Enable','on','ColumnEditable',true); %Make table uneditable
+        set(Optopanel, 'Enable', 'on');
+        set(ITIpanel, 'Enable', 'on');
+        set(bgdrpanel, 'Enable','on');      
+    elseif selectedmode == 2
+        set(bgdrpanel, 'Enable','on');    
+    elseif selectedmode == 3
+        set(licktable,'Enable','on','ColumnEditable',true); %Make table uneditable
+    elseif selectedmode == 6
+        set(cstable,'Enable','on','ColumnEditable',true); %Make table uneditable
+        set(Optopanel, 'Enable', 'on');
+        set(ITIpanel, 'Enable', 'on');
+        set(bgdrpanel, 'Enable','on');
+    end
 end
 
 function pushDisconnect(source, eventdata, connectbutton,connectfield,uploadbutton,refreshbutton,availablePorts,experimentmode,sendbutton,startbutton)
@@ -371,6 +391,7 @@ function pushDisconnect(source, eventdata, connectbutton,connectfield,uploadbutt
     set(refreshbutton,'Enable','on');
     set(availablePorts,'Enable','on');
     set(uploadbutton, 'Enable', 'on');
+    set(uploadbutton, 'Text',  'Upload');
     set(experimentmode, 'Enable', 'on');
     set(sendbutton, 'Enable', 'off');
     set(startbutton, 'Enable', 'off');
@@ -561,7 +582,7 @@ function pushSend(source,eventdata,disconnectbutton,refreshbutton,startbutton, t
 end
 
 
-function pushStart(source,eventdata,testbuttons,stopbutton,filenamefield,experimentmode,...
+function pushStart(source,eventdata,testbuttons,stopbutton,filenamefield,disconnectbutton,experimentmode,...
     laserfunctions,ITIfunctions,bgdsolfunctions,starttimefield,cstable, licktable)
     
     global s running actvAx saveDir textfield fig
@@ -667,6 +688,7 @@ function pushStart(source,eventdata,testbuttons,stopbutton,filenamefield,experim
 
     set(source,'Enable','off');             %Disable start button
     set(stopbutton,'Enable','on');
+    set(disconnectbutton,'Enable','off');
     %Turn off testing buttons
     for btn = testbuttons
         set(btn,'Enable','off');

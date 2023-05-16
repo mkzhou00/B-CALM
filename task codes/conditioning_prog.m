@@ -113,6 +113,7 @@ tempsecondlight4 = NaN(1,1);
 
 % setup plot
 axes(actvAx)                            % make the activity axes the current one
+disp(gca)
 if (experimentmode == 1 && intervaldistribution<3) || experimentmode == 4 || experimentmode == 6 || experimentmode == 7
     plot(xWindow,[0 0],'k','LineWidth',2);hold on                   % start figure for plots
     set(actvAx,'ytick',[], ...
